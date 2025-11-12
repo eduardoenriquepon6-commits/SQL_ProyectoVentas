@@ -1,6 +1,6 @@
-Create SCHEMA ventas_directas;
+CREATE SCHEMA ventas_directas;
 
-CREATE TABLE ventas_directas.clientes
+CREATE TABLE ventas_directas.usuarios
 (
     id INT IDENTITY (1,1) PRIMARY KEY,
     nombre_completo NVARCHAR (150) NOT NULL,
@@ -9,7 +9,7 @@ CREATE TABLE ventas_directas.clientes
     fecha_registro DATETIME DEFAULT SYSDATETIME()
 )
 
-CREATE TABLE ventas_directas.catalogo
+CREATE TABLE ventas_directas.productos
 (
     id INT IDENTITY (1,1) PRIMARY KEY,
     nombre_producto NVARCHAR (150) NOT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE ventas_directas.catalogo
     activo BIT DEFAULT 1
 )
 
-CREATE TABLE ventas_directas.inventario
+CREATE TABLE ventas_directas.stock
 (
     id INT IDENTITY (1,1) PRIMARY KEY,
     id_producto INT NOT NULL,
@@ -26,14 +26,14 @@ CREATE TABLE ventas_directas.inventario
     ubicacion NVARCHAR (100)
 )
 
-ALTER TABLE ventas_directas.inventario
-ADD CONSTRAINT FK_Catalogo_Inventario
-FOREIGN KEY (id_producto) REFERENCES ventas_directas.catalogo(id)
+ALTER TABLE ventas_directas.stock
+ADD CONSTRAINT FK_productos_stock
+FOREIGN KEY (id_producto) REFERENCES ventas_directas.productos(id)
 
-CREATE TABLE ventas_directas.Orden_compra
+CREATE TABLE ventas_directas.Orden_pedido
 (
     id INT IDENTITY (1,1) PRIMARY KEY,
-    id_cliente INT NOT NULL,
+    id_usuario INT NOT NULL,
     fecha_orden DATETIME DEFAULT SYSDATETIME(),
     total FLOAT NOT NULL,
     estado_pago NVARCHAR (50) DEFAULT 'Pendiente',
@@ -41,11 +41,11 @@ CREATE TABLE ventas_directas.Orden_compra
     metodo_pago NVARCHAR (50)
 )
 
-ALTER TABLE ventas_directas.Orden_compra
-ADD CONSTRAINT FK_Cliente_OrdenCompra
-FOREIGN KEY (id_cliente) REFERENCES ventas_directas.clientes(id)
+ALTER TABLE ventas_directas.Orden_pedido
+ADD CONSTRAINT FK_usuario_OrdenPedido
+FOREIGN KEY (id_usuario) REFERENCES ventas_directas.usuarios(id)
 
-CREATE TABLE ventas_directas.Detalle_orden
+CREATE TABLE ventas_directas.Detalle_pedido
 (
     id INT IDENTITY (1,1) PRIMARY KEY,
     id_orden INT NOT NULL,
@@ -55,10 +55,10 @@ CREATE TABLE ventas_directas.Detalle_orden
     subtotal AS (cantidad * precio_unitario) PERSISTED,
 )
 
-ALTER TABLE ventas_directas.Detalle_orden
-ADD CONSTRAINT FK_OrdenCompra_DetalleOrden
-FOREIGN KEY (id_orden) REFERENCES ventas_directas.Orden_compra(id)
+ALTER TABLE ventas_directas.Detalle_pedido
+ADD CONSTRAINT FK_OrdenPedido_DetallePedido
+FOREIGN KEY (id_orden) REFERENCES ventas_directas.Orden_pedido(id)
 
-ALTER TABLE ventas_directas.Detalle_orden
-ADD CONSTRAINT FK_Catalogo_DetalleOrden
-FOREIGN KEY (id_producto) REFERENCES ventas_directas.catalogo(id)
+ALTER TABLE ventas_directas.Detalle_pedido
+ADD CONSTRAINT FK_productos_DetallePedido
+FOREIGN KEY (id_producto) REFERENCES ventas_directas.productos(id)
