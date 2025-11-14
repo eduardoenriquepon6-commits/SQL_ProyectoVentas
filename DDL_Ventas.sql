@@ -9,6 +9,12 @@ CREATE TABLE ventas_directas.usuarios
     fecha_registro DATETIME DEFAULT SYSDATETIME()
 )
 
+CREATE TABLE ventas_directas.categorias
+(
+    id INT IDENTITY (1,1) PRIMARY KEY,
+    nombre_categoria NVARCHAR (100) NOT NULL,
+)
+
 CREATE TABLE ventas_directas.productos
 (
     id INT IDENTITY (1,1) PRIMARY KEY,
@@ -18,6 +24,14 @@ CREATE TABLE ventas_directas.productos
     activo BIT DEFAULT 1
 )
 
+ALTER TABLE ventas_directas.productos
+ADD id_categoria INT NOT NULL;
+
+ALTER TABLE ventas_directas.productos
+ADD CONSTRAINT FK_Productos_Categoria
+FOREIGN KEY (id_categoria) REFERENCES ventas_directas.categorias(id)
+
+
 CREATE TABLE ventas_directas.stock
 (
     id INT IDENTITY (1,1) PRIMARY KEY,
@@ -25,6 +39,9 @@ CREATE TABLE ventas_directas.stock
     cantidad_disponible INT DEFAULT 0,
     ubicacion NVARCHAR (100)
 )
+
+ALTER TABLE ventas_directas.stock
+DROP COLUMN ubicacion;
 
 ALTER TABLE ventas_directas.stock
 ADD CONSTRAINT FK_productos_stock
