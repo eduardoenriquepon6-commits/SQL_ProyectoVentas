@@ -12,7 +12,7 @@ CREATE TABLE ventas_directas.usuarios
 CREATE TABLE ventas_directas.categorias
 (
     id INT IDENTITY (1,1) PRIMARY KEY,
-    nombre_categoria NVARCHAR (100) NOT NULL,
+    nombre_categoria NVARCHAR (100) NOT NULL
 )
 
 CREATE TABLE ventas_directas.productos
@@ -20,7 +20,6 @@ CREATE TABLE ventas_directas.productos
     id INT IDENTITY (1,1) PRIMARY KEY,
     nombre_producto NVARCHAR (150) NOT NULL,
     descripcion_producto NVARCHAR (300),
-    precio_unitario FLOAT NOT NULL,
     activo BIT DEFAULT 1
 )
 
@@ -36,25 +35,27 @@ CREATE TABLE ventas_directas.stock
 (
     id INT IDENTITY (1,1) PRIMARY KEY,
     id_producto INT NOT NULL,
-    cantidad_disponible INT DEFAULT 0,
-    ubicacion NVARCHAR (100)
+    cantidad INT DEFAULT 0
 )
-
-ALTER TABLE ventas_directas.stock
-DROP COLUMN ubicacion;
 
 ALTER TABLE ventas_directas.stock
 ADD CONSTRAINT FK_productos_stock
 FOREIGN KEY (id_producto) REFERENCES ventas_directas.productos(id)
+
+ALTER TABLE ventas_directas.stock 
+ADD precio_unitario FLOAT;
+
+EXEC sp_rename 
+    'ventas_directas.stock.cantidad_disponible',
+    'cantidad',
+    'COLUMN';
 
 CREATE TABLE ventas_directas.Orden_pedido
 (
     id INT IDENTITY (1,1) PRIMARY KEY,
     id_usuario INT NOT NULL,
     fecha_orden DATETIME DEFAULT SYSDATETIME(),
-    total FLOAT NOT NULL,
     estado_pago NVARCHAR (50) DEFAULT 'Pendiente',
-    -- Pendiente, pagado, cancelado
     metodo_pago NVARCHAR (50)
 )
 
