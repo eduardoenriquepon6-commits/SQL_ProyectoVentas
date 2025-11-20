@@ -45,11 +45,6 @@ FOREIGN KEY (id_producto) REFERENCES ventas_directas.productos(id)
 ALTER TABLE ventas_directas.stock 
 ADD precio_unitario FLOAT;
 
-EXEC sp_rename 
-    'ventas_directas.stock.cantidad_disponible',
-    'cantidad',
-    'COLUMN';
-
 CREATE TABLE ventas_directas.Orden_pedido
 (
     id INT IDENTITY (1,1) PRIMARY KEY,
